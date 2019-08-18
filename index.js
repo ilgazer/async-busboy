@@ -11,6 +11,7 @@ module.exports = function (request, options) {
   options = options || {};
   options.headers = options.headers || request.headers;
   const customOnFile = typeof options.onFile === "function" ? options.onFile : false;
+  const customOnFileWithPromise = typeof options.onFileWithPromise === "function" ? options.onFileWithPromise : false;
   delete options.onFile;
   const busboy = new Busboy(options);
 
@@ -22,7 +23,7 @@ module.exports = function (request, options) {
 
     busboy
       .on('field', onField.bind(null, fields))
-      .on('file', customOnFile || onFile.bind(null, filePromises))
+      .on('file', customOnFile || (customOnFileWithPromise || onFile).bind(null, filePromises))
       .on('close', cleanup)
       .on('error', onError)
       .on('end', onEnd)

@@ -43,7 +43,10 @@ describe('Async-busboy', () => {
     const onFileHandler = (fieldname, file, filename, encoding, mimetype) => {
         fileContentPromises.push(readFileStreamPromise(file));
     };
-    asyncBusboy(request(), { onFile: onFileHandler }).then(formData => {
+    const onFileWithPromiseHandler = (filePromises, fieldname, file, filename, encoding, mimetype) => {
+      fileContentPromises.push(readFileStreamPromise(file));
+    };
+    asyncBusboy(request(), { onFile: onFileHandler, onFileWithPromise: onFileWithPromiseHandler}).then(formData => {
       expect(Object.keys(formData.fields).length).toBe(5);
 
       // Check file contents
